@@ -1,12 +1,18 @@
 let run = document.getElementById("run");
-let resultTable = document.getElementById("results");
+let saveUrl = document.getElementById("saveUrl");
+let restoreUrl = document.getElementById("restoreUrl");
+let analysisContainer = document.getElementById("analysisContainer");
+let attacksList = document.getElementById("attacksList");
+let analysisList = document.getElementById("analysisList");
+let observationsList = document.getElementById("observationsList");
+let parameterTable = document.getElementById("parameterTable");
 let parameterForm = document.getElementById("parameterForm");
 let parameterFormInput = document.getElementById("parameterFormInput");
 let parameterFormSelect = document.getElementById("parameterFormSelect");
 let parameterFormButton = document.getElementById("parameterFormButton");
 
-url = "";
-urlParams = "";
+let url = "";
+let urlParams = "";
 
 let knowledgeBase = {
     "oauthParams": {
@@ -52,12 +58,13 @@ function processAuthRequest(urlString) {
 
     updateParamTable(urlParams);
     createParameterForm(urlParams);
+    performAnalysis(urlParams);
 }
 
 function updateParamTable(params) {
-    resultTable.innerHTML="";
+    parameterTable.innerHTML="";
     params.forEach(function(value, key) {
-        var row = resultTable.insertRow(0);
+        var row = parameterTable.insertRow(0);
 
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
@@ -107,7 +114,42 @@ function updateParameterForm() {
     });  
 }
 
-function reloadPage() {
+function performAnalysis(params) {
+    analysisContainer.removeAttribute("style");
+    analysisList.innerHTML = "";
+
+    let list_element;
+    ////////// Checks
+    // Deprecated grant types: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
+    if(params.get('response_type').includes("token")) {
+        list_element = document.createElement("li");
+        list_element.innerText = "Clients SHOULD NOT use response types that include 'token', because for these flows the authorization server includes the access tokens within the authorization response, which may enable access token leakage and access token replay attacks.";
+        analysisList.appendChild(list_element);
+    }
+
+    // Check CSRF protection: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.7
+    if(!params.get("state") && !params.get("code_challenge") && !params.get("code_challenge")) {
+        list_element = document.createElement("li");
+        list_element.innerText = "Apparently, no Anti-CSRF measures are used. It is highly recommended to either use a 'state' value or alternatively use PKCE or the OpenID Connect 'nonce' value."
+        analysisList.appendChild(list_element);
+    }
+
+    // "code_challenge_method" should not be used: https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
+    if(params.get("code_challenge_method" === "plain")) {
+        list_element = document.createElement("li");
+        list_element.innerText = "The PKCE extension uses 'code_challenge_method=plain', which SHOULD NOT be used.";
+        analysisList.appendChild(list_element);
+    }
+
+    ////////// Attacks
+    // Add Request URI
+
+    // Adjust Redirect URI
+
+
+}
+
+function reloadPageWithModifications() {
     let selectedString = parameterFormSelect.value;
     let newValue = document.querySelectorAll(`#parameterForm input[name="${selectedString}"]`)[0].value;
 
@@ -119,15 +161,33 @@ function reloadPage() {
     })
 }
 
-// Event listeners
-document.addEventListener("DOMContentLoaded", function() {
-    parameterFormSelect.addEventListener("change", updateParameterForm);
-    parameterFormButton.addEventListener("click", reloadPage);
+async function runAnalysis() {
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        let currentUrl = tabs[0].url;
+        processAuthRequest(currentUrl);
+    })
+}
 
-    run.addEventListener("click", async () => {
+function saveUrlLocalStorage() {
+    return chrome.storage.local.set({"savedUrl": url.toString()});
+}
+
+function restoreUrlLocalStorage() {
+    chrome.storage.local.get("savedUrl", function(result) {
         chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-            let currentUrl = tabs[0].url;
-            processAuthRequest(currentUrl);
-        })
+            chrome.tabs.update(tabs[0].id, { url: result.savedUrl });
+        });
     });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Event listeners
+    parameterFormSelect.addEventListener("change", updateParameterForm);
+    parameterFormButton.addEventListener("click", reloadPageWithModifications);
+    run.addEventListener("click", runAnalysis);
+    saveUrl.addEventListener("click", saveUrlLocalStorage);
+    restoreUrl.addEventListener("click", restoreUrlLocalStorage);
+
+    // Initial analysis
+    runAnalysis();
 });

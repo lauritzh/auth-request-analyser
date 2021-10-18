@@ -3,15 +3,37 @@
 <html>
   <head></head>
   <body>
-    <button id="run">Start Analysis</button>
     
-    <table id="results"></table>
+    <table id="parameterTable"></table>
+
+    <hr>
 
     <form id="parameterForm" style="display:none;">
         <select id="parameterFormSelect"></select>
         <div id="parameterFormInput"></div>
         <button id="parameterFormButton">Update and Reload</button>
     </form>
+
+    <hr>
+
+    <details id="analysisContainer" style="display:none;">
+        <summary>Detailed Analysis</summary>
+            <h3>Observations:</h3>
+            <ul id="observationsList"></ul>
+        <hr>
+            <h3>Recommendations:</h3>
+            <ul id="analysisList"></ul>
+        <hr>
+            <h3>What you should try: TBD</h3>
+            <ul id="attacksList"></ul>
+    </details>
+    <hr>
+
+    <button id="run">Run Analysis again</button>
+
+    <hr>
+    <button id="saveUrl">Save Current URL</button>
+    <button id="restoreUrl">Restore Saved URL</button>
 
     <script src="popup.js"></script>
   </body>
