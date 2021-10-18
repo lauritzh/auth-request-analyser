@@ -62,9 +62,9 @@ function processAuthRequest(urlString) {
 }
 
 function updateParamTable(params) {
-    parameterTable.innerHTML="";
+    parameterTable.innerHTML="<th>Parameter</th><th>Value</th>";
     params.forEach(function(value, key) {
-        var row = parameterTable.insertRow(0);
+        var row = parameterTable.insertRow(-1);
 
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
@@ -117,8 +117,17 @@ function updateParameterForm() {
 function performAnalysis(params) {
     analysisContainer.removeAttribute("style");
     analysisList.innerHTML = "";
+    observationsList.innerHTML = "";
 
     let list_element;
+    ////////// Observations
+    if(params.get('scope').includes("openid")) {
+        list_element = document.createElement("li");
+        list_element.innerText = "The current flow apparently uses OpenID Connect, as the scope includes 'openid'.";
+        observationsList.appendChild(list_element);
+    }
+
+
     ////////// Checks
     // Deprecated grant types: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
     if(params.get('response_type').includes("token")) {
