@@ -1,3 +1,7 @@
+/**
+ * (c) Lauritz Holtmann, https://security.lauritz-holtmann.de
+ */
+
 let run = document.getElementById("run");
 let saveUrl = document.getElementById("saveUrl");
 let restoreUrl = document.getElementById("restoreUrl");
@@ -118,6 +122,7 @@ function performAnalysis(params) {
     analysisContainer.removeAttribute("style");
     analysisList.innerHTML = "";
     observationsList.innerHTML = "";
+    attacksList.innerHTML = "";
 
     let list_element;
     ////////// Observations
@@ -151,6 +156,24 @@ function performAnalysis(params) {
     }
 
     ////////// Attacks
+    // Implicit Flow supported?
+    if(!params.get('response_type').includes("token")) {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'Even though this flow does not use the deprecated implicit grant type, it may be allowed for this client. <a href="#" id="attackImplicitFlowSupported">Change response_type to \'token\'.</a>';
+        attacksList.appendChild(list_element);
+        document.getElementById("attackImplicitFlowSupported").addEventListener("click", launchAttackImplicitFlowSupported);
+    }
+
+    // response_mode fragment supported?
+
+    // Change PKCE code_challenge_method to plain https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
+    if(params.get('code_challenge_method') === "S256") {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'The current flow uses \'S256\' as code_challenge_method, but \'plain\' may also be allowed. The \'plain\' option only exists for compatibility reasons and SHOULD NOT be used´. <a href="#" id="attackPkcePlain">Change code_challenge_method to \'plain\'.</a>';
+        attacksList.appendChild(list_element);
+        document.getElementById("attackPkcePlain").addEventListener("click", launchAttackPkcePlain);
+    }
+
     // Add Request URI
 
     // Adjust Redirect URI
@@ -162,12 +185,7 @@ function reloadPageWithModifications() {
     let selectedString = parameterFormSelect.value;
     let newValue = document.querySelectorAll(`#parameterForm input[name="${selectedString}"]`)[0].value;
 
-    urlParams.set(selectedString, newValue);
-    url.search = urlParams.toString();
-    
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        chrome.tabs.update(tabs[0].id, { url: url.toString() });
-    })
+    setParameterAndReload(selectedString, newValue);
 }
 
 async function runAnalysis() {
@@ -189,14 +207,36 @@ function restoreUrlLocalStorage() {
     });
 }
 
+function setParameterAndReload(parameterName, parameterValue) {
+    urlParams.set(parameterName, parameterValue);
+    url.search = urlParams.toString();
+
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        chrome.tabs.update(tabs[0].id, { url: url.toString() });
+    });
+}
+
+////////// Attacks
+function launchAttackImplicitFlowSupported() {
+    setParameterAndReload("response_type", "token");
+}
+
+function launchAttackPkcePlain() {
+    setParameterAndReload("code_challenge_method", "plain");
+}
+
+/**************************************************************************************************/
 document.addEventListener("DOMContentLoaded", function() {
-    // Event listeners
+    // Event listeners for UI elements
     parameterFormSelect.addEventListener("change", updateParameterForm);
     parameterFormButton.addEventListener("click", reloadPageWithModifications);
     run.addEventListener("click", runAnalysis);
     saveUrl.addEventListener("click", saveUrlLocalStorage);
     restoreUrl.addEventListener("click", restoreUrlLocalStorage);
 
-    // Initial analysis
+    // make sure to trigger analysis if popup is opened during page browse
+    chrome.tabs.onUpdated.addListener(runAnalysis);
+
+    // Initial analysis on popup open
     runAnalysis();
 });
