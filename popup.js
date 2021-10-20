@@ -32,13 +32,16 @@ let knowledgeBase = {
         },
         "state":{
             "required":false,
-            "recommended":true
+            "recommended":true,
+            "description":"This parameter SHOULD be used to prevent CSRF, as it enables the client (= relying party) to maintain a state between Auth. Request and Auth. Response. The parameter MUST be bound to the end-user session."
         },
         "client_id":{
-            "required":true
+            "required":true,
+            "description":"This parameter identifies the client."
         },
         "scope":{
-            "required":false
+            "required":false,
+            "description":"This parameter defines the requested access scope."
         },
         "response_mode":{
             "allowed":["query","fragment"],
@@ -146,7 +149,7 @@ function performAnalysis(params) {
     }
 
     // Check CSRF protection: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.7
-    if(!params.get("state") && !params.get("code_challenge") && !params.get("code_challenge")) {
+    if(!params.get("state") && !params.get("code_challenge") && !params.get("nonce")) {
         list_element = document.createElement("li");
         list_element.innerText = "Apparently, no Anti-CSRF measures are used. It is highly recommended to either use a 'state' value or alternatively use PKCE or the OpenID Connect 'nonce' value."
         analysisList.appendChild(list_element);
@@ -156,6 +159,12 @@ function performAnalysis(params) {
     if(params.get("code_challenge_method" === "plain")) {
         list_element = document.createElement("li");
         list_element.innerText = "The PKCE extension uses 'code_challenge_method=plain', which SHOULD NOT be used.";
+        analysisList.appendChild(list_element);
+    }
+    // Public Clients no PKCE: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.1
+    if(!params.get('code_challenge')) {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'The client does not use the Proof Key for Code Exchange (PKCE, RFC7636). If the application is a public client (client credentials can not be stored privately), PKCE MUST be used. Check if the implementation is a public client!';
         analysisList.appendChild(list_element);
     }
 
@@ -169,8 +178,14 @@ function performAnalysis(params) {
     }
 
     // response_mode fragment supported?
+    if(!params.get('response_mode')) {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'Even though this flow does not use a \'response_mode\' parameter, you may test if it supported by the authorization server. In combination with an Open Redirect on an allowed \'redirect_uri\', this may enable token disclosure. <a href="#" id="attackResponseMode">Add response_mode \'fragment\'.</a>';
+        attacksList.appendChild(list_element);
+        document.getElementById("attackResponseMode").addEventListener("click", launchAttackResponseMode);
+    }
 
-    // Change PKCE code_challenge_method to plain https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
+    // Change PKCE code_challenge_method to plain: https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
     if(params.get('code_challenge_method') === "S256") {
         list_element = document.createElement("li");
         list_element.innerHTML = 'The current flow uses \'S256\' as code_challenge_method, but \'plain\' may also be allowed. The \'plain\' option only exists for compatibility reasons and SHOULD NOT be used´. <a href="#" id="attackPkcePlain">Change code_challenge_method to \'plain\'.</a>';
@@ -178,7 +193,7 @@ function performAnalysis(params) {
         document.getElementById("attackPkcePlain").addEventListener("click", launchAttackPkcePlain);
     }
 
-    // Add Request URI
+    // Add Request URI: https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf
     if(!params.get('request_uri')) {
         list_element = document.createElement("li");
         list_element.innerHTML = 'The \'request_uri\' parameter is well-known to allow Server-Side Request Forgery by design. Add a request_uri parameter: <form action="#"><input id="attackRequestUriValue" type="text" size="50"><button id="attackRequestUri">Add request_uri</button></form>';
@@ -186,7 +201,7 @@ function performAnalysis(params) {
         document.getElementById("attackRequestUri").addEventListener("click", launchAttackRequestUri);
     }
 
-    // Adjust Redirect URI
+    // Adjust Redirect URI: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.1.3
     if(params.get('redirect_uri')) {
         list_element = document.createElement("li");
         list_element.innerHTML = 'If the \'redirect_uri\' parameter is present, the authorization server MUST compare it against pre-defined redirection URI values using simple string comparison (RFC3986). Try to fiddle around with different schemes, (sub-)domains, paths, query parameters and fragments. Lax validation may lead to token disclosure.';
@@ -240,6 +255,10 @@ function launchAttackPkcePlain() {
 
 function launchAttackRequestUri() {
     setParameterAndReload("request_uri", document.getElementById("attackRequestUriValue").value);
+}
+
+function launchAttackResponseMode() {
+    setParameterAndReload("response_mode", "fragment");
 }
 
 /**************************************************************************************************/
