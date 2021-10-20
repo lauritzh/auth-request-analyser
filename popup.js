@@ -15,8 +15,8 @@ let parameterFormInput = document.getElementById("parameterFormInput");
 let parameterFormSelect = document.getElementById("parameterFormSelect");
 let parameterFormButton = document.getElementById("parameterFormButton");
 
-let url = "";
-let urlParams = "";
+let url;
+let urlParams;
 
 let knowledgeBase = {
     "oauthParams": {
@@ -69,19 +69,22 @@ function updateParamTable(params) {
     parameterTable.innerHTML="<th>Parameter</th><th>Value</th>";
     params.forEach(function(value, key) {
         var row = parameterTable.insertRow(-1);
+        if(knowledgeBase["oauthParams"][key] && knowledgeBase["oauthParams"][key]["description"]) {
+            row.title = knowledgeBase["oauthParams"][key]["description"];
+        }
 
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
+        var parameter = row.insertCell(0);
+        var val = row.insertCell(1);
 
-        cell1.innerText = key;
-        cell2.innerText = value;
+        parameter.innerText = key;
+        val.innerText = value;
     });
 }
 
 function createParameterForm(params) {
     parameterForm.removeAttribute("style");
-    parameterFormSelect.innerHTML="";
-    parameterFormInput.innerHTML="";
+    parameterFormSelect.innerHTML = "";
+    parameterFormInput.innerHTML = "";
 
     let firstElement = true;
     params.forEach(function(value, key) {
@@ -89,20 +92,21 @@ function createParameterForm(params) {
         option.text = key;
         parameterFormSelect.add(option);
 
-        let input = document.createElement("input");
-        input.value = value;
-        input.name = key;
-        input.size = 100;
+        let element;
+        element = document.createElement("input");
+        element.value = value;
+        element.name = key;
+        element.size = "80";
+        element.type = "text";
 
         // only display first input field
         if(firstElement) {
             firstElement = false;
-            input.type = "text";
         } else {
-            input.type = "hidden";
+            element.type = "hidden";
         }
 
-        parameterFormInput.appendChild(input);
+        parameterFormInput.appendChild(element);
     });
 }
 
@@ -175,10 +179,19 @@ function performAnalysis(params) {
     }
 
     // Add Request URI
+    if(!params.get('request_uri')) {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'The \'request_uri\' parameter is well-known to allow Server-Side Request Forgery by design. Add a request_uri parameter: <form action="#"><input id="attackRequestUriValue" type="text" size="50"><button id="attackRequestUri">Add request_uri</button></form>';
+        attacksList.appendChild(list_element);
+        document.getElementById("attackRequestUri").addEventListener("click", launchAttackRequestUri);
+    }
 
     // Adjust Redirect URI
-
-
+    if(params.get('redirect_uri')) {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'If the \'redirect_uri\' parameter is present, the authorization server MUST compare it against pre-defined redirection URI values using simple string comparison (RFC3986). Try to fiddle around with different schemes, (sub-)domains, paths, query parameters and fragments. Lax validation may lead to token disclosure.';
+        attacksList.appendChild(list_element);
+    }
 }
 
 function reloadPageWithModifications() {
@@ -223,6 +236,10 @@ function launchAttackImplicitFlowSupported() {
 
 function launchAttackPkcePlain() {
     setParameterAndReload("code_challenge_method", "plain");
+}
+
+function launchAttackRequestUri() {
+    setParameterAndReload("request_uri", document.getElementById("attackRequestUriValue").value);
 }
 
 /**************************************************************************************************/

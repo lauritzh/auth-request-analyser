@@ -6,6 +6,10 @@
     <style>
         body {
           background-color: linen;
+          background-image: url("AuRA-Logo.svg");
+          background-position: top right;
+          background-repeat: no-repeat;
+          background-size: 6em;
         }
         
         h3,
@@ -18,6 +22,29 @@
             font-weight: bolder;
             text-align: right;
         }
+
+        #footer {
+          width: 100%;
+        }
+        #footer div {
+          width: 40%;
+        }
+        #footerLeft {
+          float: left;
+        }
+        #footerRight {
+          float: right;
+          text-align: right;
+        }
+
+        #parameterFormRow {
+          width: 100%;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        #parameterFormRow * {
+          display: inline-block;
+        }
     </style>
   </head>
   <body>
@@ -27,8 +54,10 @@
     <hr>
 
     <form id="parameterForm" style="display:none;">
-        <select id="parameterFormSelect"></select>
-        <div id="parameterFormInput"></div>
+        <div id="parameterFormRow">
+          <select id="parameterFormSelect"></select>
+          <div id="parameterFormInput"></div>
+        </div>
         <button id="parameterFormButton">Update and Reload</button>
     </form>
 
@@ -46,13 +75,15 @@
             <ul id="attacksList"></ul>
     </details>
     <hr>
-
-    <button id="run">Run Analysis again</button>
-
-    <hr>
-    <button id="saveUrl">Save Current URL</button>
-    <button id="restoreUrl">Restore Saved URL</button>
-
+    <div id="footer">
+      <div id="footerLeft">
+        <button id="run">Run Analysis again</button>
+      </div>
+      <div id="footerRight">
+        <button id="saveUrl">Save Current URL</button><br>
+        <button id="restoreUrl">Restore Saved URL</button>
+      </div>
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>
