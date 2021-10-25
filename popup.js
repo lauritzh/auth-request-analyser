@@ -196,7 +196,7 @@ function performAnalysis(params) {
     // Add Request URI: https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf
     if(!params.get('request_uri')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'The \'request_uri\' parameter is well-known to allow Server-Side Request Forgery by design. Add a request_uri parameter: <form action="#"><input id="attackRequestUriValue" type="text" size="50"><button id="attackRequestUri">Add request_uri</button></form>';
+        list_element.innerHTML = 'The \'request_uri\' parameter is <a href="https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf" target="_blank">well-known</a> to allow Server-Side Request Forgery by design. Add a request_uri parameter: <form action="#"><input id="attackRequestUriValue" type="text" size="50"><button id="attackRequestUri">Add request_uri</button></form>';
         attacksList.appendChild(list_element);
         document.getElementById("attackRequestUri").addEventListener("click", launchAttackRequestUri);
     }
