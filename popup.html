@@ -12,21 +12,37 @@
           background-size: 6em;
         }
         
+        hr {
+          margin-top: 15px; 
+          margin-bottom: 15px
+        }
+
+        a {
+          color: maroon;
+        }
+
         h3,
         th {
           color: maroon;
-          margin-left: 20px;
+          margin-left: 10px;
         }
 
+        th:nth-child(1) {
+            text-align: right;
+            padding-right: 15px;
+        }
+        th:nth-child(2) {
+            text-align: left;
+        }
         td:nth-child(1) {  
             font-weight: bolder;
             text-align: right;
+            padding-right: 15px;
         }
         tr[title] td:nth-child(1) {
           text-decoration:underline;
           text-decoration-style: dotted;
         }
-
         tr>td {
           padding-bottom: 0.5em;
         }
@@ -53,14 +69,24 @@
         #parameterFormRow * {
           display: inline-block;
         }
+
+        #parameterFormButton {
+          margin-top: 5px;
+        }
+
+        li {
+          margin-bottom: 10px;
+        }
     </style>
   </head>
   <body>
     
+    <h3>Auth. Request Analyzer</h3>
+
     <table id="parameterTable"></table>
 
     <hr>
-
+    <h3>Adjust parameter:</h3>
     <form id="parameterForm" style="display:none;">
         <div id="parameterFormRow">
           <select id="parameterFormSelect"></select>
@@ -86,12 +112,14 @@
     <div id="footer">
       <div id="footerLeft">
         <button id="run">Run Analysis again</button>
+        <p>Please have a look at the <a href="https://github.com/lauritzh/auth-request-analyzer" target="_blank">Github</a> repository for <i>documentation</i> and <i>issue tracking</i>.</p>
       </div>
       <div id="footerRight">
         <button id="saveUrl">Save Current URL</button><br>
         <button id="restoreUrl">Restore Saved URL</button>
       </div>
     </div>
+
     <script src="popup.js"></script>
   </body>
 </html>
