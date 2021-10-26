@@ -133,54 +133,54 @@ function performAnalysis(params) {
 
     let list_element;
     ////////// Observations
+    // Scope includes "openid": https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
     if(params.get('scope').includes("openid")) {
         list_element = document.createElement("li");
-        list_element.innerText = "The current flow apparently uses OpenID Connect, as the scope includes 'openid'.";
+        list_element.innerHTML = 'The current flow apparently uses OpenID Connect, as the scope includes \'openid\'. <a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest" target="_blank">See literature.</a>';
         observationsList.appendChild(list_element);
     }
-
 
     ////////// Checks
     // Deprecated grant types: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
     if(params.get('response_type').includes("token")) {
         list_element = document.createElement("li");
-        list_element.innerText = "Clients SHOULD NOT use response types that include 'token', because for these flows the authorization server includes the access tokens within the authorization response, which may enable access token leakage and access token replay attacks.";
+        list_element.innerHTML = 'Clients SHOULD NOT use response types that include \'token\', because for these flows the authorization server includes the access tokens within the authorization response, which may enable access token leakage and access token replay attacks. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2" target="_blank">See literature.</a>';
         analysisList.appendChild(list_element);
     }
 
     // Check CSRF protection: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.7
     if(!params.get("state") && !params.get("code_challenge") && !params.get("nonce")) {
         list_element = document.createElement("li");
-        list_element.innerText = "Apparently, no Anti-CSRF measures are used. It is highly recommended to either use a 'state' value or alternatively use PKCE or the OpenID Connect 'nonce' value."
+        list_element.innerHTML = 'Apparently, no Anti-CSRF measures are used. It is highly recommended to either use a \'state\' value or alternatively use PKCE or the OpenID Connect \'nonce\' value. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.7" target="_blank">See literature.</a>';
         analysisList.appendChild(list_element);
     }
 
     // "code_challenge_method" should not be used: https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
     if(params.get("code_challenge_method" === "plain")) {
         list_element = document.createElement("li");
-        list_element.innerText = "The PKCE extension uses 'code_challenge_method=plain', which SHOULD NOT be used.";
+        list_element.innerHTML = 'The PKCE extension uses \'code_challenge_method=plain\', which SHOULD NOT be used. <a href="https://datatracker.ietf.org/doc/html/rfc7636#section-7.2" target="_blank">See literature.</a>';
         analysisList.appendChild(list_element);
     }
     // Public Clients no PKCE: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.1
     if(!params.get('code_challenge')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'The client does not use the Proof Key for Code Exchange (PKCE, RFC7636). If the application is a public client (client credentials can not be stored privately), PKCE MUST be used. Check if the implementation is a public client!';
+        list_element.innerHTML = 'The client does not use the Proof Key for Code Exchange (PKCE, RFC7636). If the application is a public client (client credentials can not be stored privately), PKCE MUST be used. Check if the implementation is a public client! <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.1" target="_blank">See literature.</a>';
         analysisList.appendChild(list_element);
     }
 
     ////////// Attacks
-    // Implicit Flow supported?
+    // Implicit Flow supported? https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
     if(!params.get('response_type').includes("token")) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'Even though this flow does not use the deprecated implicit grant type, it may be allowed for this client. <a href="#" id="attackImplicitFlowSupported">Change response_type to \'token\'.</a>';
+        list_element.innerHTML = 'Even though this flow does not use the deprecated implicit grant type, it may be allowed for this client. <button href="#" id="attackImplicitFlowSupported">Change response_type to \'token\'</button>. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2" target="_blank">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackImplicitFlowSupported").addEventListener("click", launchAttackImplicitFlowSupported);
     }
 
-    // response_mode fragment supported?
+    // response_mode fragment supported? https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
     if(!params.get('response_mode')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'Even though this flow does not use a \'response_mode\' parameter, you may test if it supported by the authorization server. In combination with an Open Redirect on an allowed \'redirect_uri\', this may enable token disclosure. <a href="#" id="attackResponseMode">Add response_mode \'fragment\'.</a>';
+        list_element.innerHTML = 'Even though this flow does not use a \'response_mode\' parameter, you may test if it supported by the authorization server. In combination with an Open Redirect on an allowed \'redirect_uri\', this may enable token disclosure. <button href="#" id="attackResponseMode">Add response_mode \'fragment\'</button>. <a href="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html" target="_blank">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackResponseMode").addEventListener("click", launchAttackResponseMode);
     }
@@ -188,7 +188,7 @@ function performAnalysis(params) {
     // Change PKCE code_challenge_method to plain: https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
     if(params.get('code_challenge_method') === "S256") {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'The current flow uses \'S256\' as code_challenge_method, but \'plain\' may also be allowed. The \'plain\' option only exists for compatibility reasons and SHOULD NOT be used´. <a href="#" id="attackPkcePlain">Change code_challenge_method to \'plain\'.</a>';
+        list_element.innerHTML = 'The current flow uses \'S256\' as code_challenge_method, but \'plain\' may also be allowed. The \'plain\' option only exists for compatibility reasons and SHOULD NOT be used´. <button href="#" id="attackPkcePlain">Change code_challenge_method to \'plain\'</button>. <a href="https://datatracker.ietf.org/doc/html/rfc7636#section-7.2" target="_blank">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackPkcePlain").addEventListener("click", launchAttackPkcePlain);
     }
@@ -196,7 +196,7 @@ function performAnalysis(params) {
     // Add Request URI: https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf
     if(!params.get('request_uri')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'The \'request_uri\' parameter is <a href="https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf" target="_blank">well-known</a> to allow Server-Side Request Forgery by design. Add a request_uri parameter: <form action="#"><input id="attackRequestUriValue" type="text" size="50"><button id="attackRequestUri">Add request_uri</button></form>';
+        list_element.innerHTML = 'The \'request_uri\' parameter is <a href="https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf" target="_blank">well-known</a> to allow Server-Side Request Forgery by design. Add a request_uri parameter: <form action="#"><input id="attackRequestUriValue" type="text" size="50"><button id="attackRequestUri">Add request_uri</button></form> <a href="https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-csf-2017.pdf" target="_blank">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackRequestUri").addEventListener("click", launchAttackRequestUri);
     }
@@ -204,7 +204,7 @@ function performAnalysis(params) {
     // Adjust Redirect URI: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.1.3
     if(params.get('redirect_uri')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'If the \'redirect_uri\' parameter is present, the authorization server MUST compare it against pre-defined redirection URI values using simple string comparison (RFC3986). Try to fiddle around with different schemes, (sub-)domains, paths, query parameters and fragments. Lax validation may lead to token disclosure.';
+        list_element.innerHTML = 'If the \'redirect_uri\' parameter is present, the authorization server MUST compare it against pre-defined redirection URI values using simple string comparison (RFC3986). Try to fiddle around with different schemes, (sub-)domains, paths, query parameters and fragments. Lax validation may lead to token disclosure. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.1.3" target="_blank">See literature.</a>';
         attacksList.appendChild(list_element);
     }
 }
