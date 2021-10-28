@@ -29,3 +29,7 @@ To use the *unpacked sources*, follow these steps:
 
 ## Privacy
 The extension analyzes the Auth. Request using the bundled *JavaScript* routines. No information is disclosed to the author of this extension. 
+
+
+## Disclaimer
+*Any information shared within this repository must not be used with malicious intentions. This tool is shared for educational purposes only. Any malicious use will not hold the author responsible.*
