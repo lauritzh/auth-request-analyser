@@ -5,6 +5,7 @@
 let run = document.getElementById("run");
 let saveUrl = document.getElementById("saveUrl");
 let restoreUrl = document.getElementById("restoreUrl");
+let noAuthRequest = document.getElementById("noAuthRequest");
 let analysisContainer = document.getElementById("analysisContainer");
 let attacksList = document.getElementById("attacksList");
 let analysisList = document.getElementById("analysisList");
@@ -59,8 +60,10 @@ function processAuthRequest(urlString) {
     urlParams = new URLSearchParams(url.search);
 
     if (!isAuthRequest(urlParams)) {
-        alert("Error: The given URL does not include all REQUIRED parameters for Auth. Requests.");
+        console.log("Error: The given URL does not include all REQUIRED parameters for Auth. Requests.");
         return -1;
+    } else {
+        noAuthRequest.style.display = "none";
     }
 
     updateParamTable(urlParams);
