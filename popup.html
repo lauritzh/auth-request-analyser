@@ -84,9 +84,12 @@
     
     <h3>Auth. Request Analyser</h3>
 
+    <!-- Parameter Table: The following Table is used to render request parameters (it is only filled with content if an auth request is given) -->
     <table id="parameterTable"></table>
 
     <hr>
+
+    <!-- Parameter Form: The following markup is used to render the form that can be used to adjust request parameters -->
     <form id="parameterForm" style="display:none;">
       <h3>Adjust parameter:</h3>
         <div id="parameterFormRow">
@@ -94,10 +97,10 @@
           <div id="parameterFormInput"></div>
         </div>
         <button id="parameterFormButton">Update and Reload</button>
-    </form>
+        <hr>
+      </form>
 
-    <hr>
-
+    <!-- Analysis Container: The following markup is used to render the observations, findings and suggestions -->
     <details id="analysisContainer" style="display:none;">
         <summary>Detailed Analysis</summary>
             <h3>Observations:</h3>
@@ -109,7 +112,10 @@
             <h3>What you should try:</h3>
             <ul id="attacksList"></ul>
     </details>
+    
     <hr>
+
+    <!-- Footer: Controls, reference to GitHub -->
     <div id="footer">
       <div id="footerLeft">
         <button id="run">Run Analysis again</button>
