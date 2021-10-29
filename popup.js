@@ -5,16 +5,21 @@
 let run = document.getElementById("run");
 let saveUrl = document.getElementById("saveUrl");
 let restoreUrl = document.getElementById("restoreUrl");
-let noAuthRequest = document.getElementById("noAuthRequest");
-let analysisContainer = document.getElementById("analysisContainer");
 let attacksList = document.getElementById("attacksList");
 let analysisList = document.getElementById("analysisList");
-let observationsList = document.getElementById("observationsList");
-let parameterTable = document.getElementById("parameterTable");
+let noAuthRequest = document.getElementById("noAuthRequest");
+let searchHistory = document.getElementById("searchHistory");
 let parameterForm = document.getElementById("parameterForm");
+let parameterTable = document.getElementById("parameterTable");
+let observationsList = document.getElementById("observationsList");
+let authRequestsForm = document.getElementById("authRequestsForm");
+let analysisContainer = document.getElementById("analysisContainer");
 let parameterFormInput = document.getElementById("parameterFormInput");
 let parameterFormSelect = document.getElementById("parameterFormSelect");
 let parameterFormButton = document.getElementById("parameterFormButton");
+let authRequestsFormButton = document.getElementById("authRequestsFormButton");
+let authRequestsFormSelect = document.getElementById("authRequestsFormSelect");
+let authRequestsFormNoResults = document.getElementById("authRequestsFormNoResults");
 
 let url;
 let urlParams;
@@ -247,6 +252,48 @@ function setParameterAndReload(parameterName, parameterValue) {
     });
 }
 
+function searchHistoryAuthRequest() {
+    authRequestsFormSelect.innerHTML = "";
+    authRequestsForm.removeAttribute("style");
+
+    chrome.history.search({ text:"response_type", maxResults:10000 }, function(data) {
+        mapTupleSet = []
+        data.some(function(page) {
+            // check if history item matches our heuristics for auth requests and to
+            // include each client at an IdP only once, we use the client_id to match
+            let testUrl = new URL(page.url);
+            let testUrlParams = new URLSearchParams(testUrl.search);
+
+            mapTuple = {"idp": testUrl.hostname, "client_id" : testUrlParams.get('client_id')};
+            if(isAuthRequest(testUrlParams) && 
+            !mapTupleSet.some(tuple => (tuple.idp == mapTuple["idp"] && tuple.client_id == mapTuple["client_id"]))) {
+                
+                // add our new mapTuple to the list of tuples
+                mapTupleSet.push(mapTuple);
+
+
+                let option = document.createElement("option");
+                // the client_id is often not human readable, thus we print the redirect_uri instead
+                option.text = `${testUrl.hostname}: ${testUrlParams.get('redirect_uri')}`;
+                option.value = page.url;
+                authRequestsFormSelect.add(option);
+
+                // limit the maximal count of entries
+                return authRequestsFormSelect.length === 10;
+            }
+        });
+        if(!authRequestsFormSelect.innerHTML) {
+            authRequestsFormNoResults.removeAttribute("style");
+        }
+    });
+}
+
+function replayHistoryAuthRequest() {
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        chrome.tabs.update(tabs[0].id, { url: authRequestsFormSelect.value });
+    });
+}
+
 ////////// Attacks
 function launchAttackImplicitFlowSupported() {
     setParameterAndReload("response_type", "token");
@@ -272,6 +319,8 @@ document.addEventListener("DOMContentLoaded", function() {
     run.addEventListener("click", runAnalysis);
     saveUrl.addEventListener("click", saveUrlLocalStorage);
     restoreUrl.addEventListener("click", restoreUrlLocalStorage);
+    searchHistory.addEventListener("click", searchHistoryAuthRequest);
+    authRequestsFormButton.addEventListener("click", replayHistoryAuthRequest);
 
     // make sure to trigger analysis if popup is opened during page browse
     chrome.tabs.onUpdated.addListener(runAnalysis);

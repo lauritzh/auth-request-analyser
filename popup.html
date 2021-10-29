@@ -23,6 +23,10 @@
           color: maroon;
         }
 
+        li {
+          margin-bottom: 10px;
+        }
+
         h3,
         th {
           color: maroon;
@@ -76,9 +80,6 @@
           margin-top: 5px;
         }
 
-        li {
-          margin-bottom: 10px;
-        }
     </style>
   </head>
   <body>
@@ -92,6 +93,19 @@
 
     <div id="noAuthRequest">
       <p><i>Uh oh!</i> Apparently this is not an Auth. Request ☹️</p>
+      <p>To configure and implement a single sign-on flow based on OAuth 2.0 or OpenID Connect 1.0 can be challenging. This extensions supports the analysis of the <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-1.2" target="_blank">Auth. Request</a>, as many misconfigurations and resulting weaknesses can be identified in this single request.</p>
+      <p>Unfortunately, this page apparently does not belong to such an <i>Auth. Request</i>. Do you want to search your recent  browser history for results that appear to belong to such requests? The output is limited to at most 10 results: <button id="searchHistory">Search your history</button></p>
+
+      <form id="authRequestsForm" style="display: none;">
+        <hr>
+        <h3>Recent Auth. Requests:</h3>
+        The following selection includes the results as <i>&lt;IdP Domain&gt;: &lt;redirect_uri&gt;</i>:<br>
+        <select id="authRequestsFormSelect"></select>
+        <button id="authRequestsFormButton">Replay Auth. Request</button><br>
+        <i>Note: If you have an active session at the Authorization Server, visiting the above URL may result in an immediate redirect to the client.</i>
+      </form>
+      <p id="authRequestsFormNoResults" style="display: none;"><b>We did not find any requests that fullfil our heuristics for Auth. Requests. Try to login somewhere using single sign-on and retry!</b></p>
+
     </div>
 
     <!-- Parameter Form: The following markup is used to render the form that can be used to adjust request parameters -->

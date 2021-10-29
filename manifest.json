@@ -6,7 +6,7 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "tabs","storage"
+    "tabs","storage","history"
   ],
   "description" : "Semi-automated analysis tool for OAuth 2.0 and OpenID 1.0 Auth Requests.",
   "icons" : {
