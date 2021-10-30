@@ -101,6 +101,7 @@ function createParameterForm(params) {
     params.forEach(function(value, key) {
         let option = document.createElement("option");
         option.text = key;
+        option.value = key;
         parameterFormSelect.add(option);
 
         let element;
@@ -119,10 +120,12 @@ function createParameterForm(params) {
 
         parameterFormInput.appendChild(element);
     });
+    setFocusRecentParameterLocalStorage();
 }
 
 function updateParameterForm() {
     let selectedString = parameterFormSelect.value;
+    saveRecentParameterLocalStorage(parameterFormSelect.value);
 
     document.querySelectorAll('#parameterForm input').forEach(function(inputField) {
         if(inputField.name !== selectedString) {
@@ -240,6 +243,22 @@ function restoreUrlLocalStorage() {
         chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
             chrome.tabs.update(tabs[0].id, { url: result.savedUrl });
         });
+    });
+}
+
+function saveRecentParameterLocalStorage(parameter) {
+    return chrome.storage.local.set({"recentParameter": parameter});
+}
+
+function setFocusRecentParameterLocalStorage() {
+    chrome.storage.local.get("recentParameter", function(result) {
+        if(result.recentParameter) {
+            // only set value of select if the option exists
+            if(document.querySelectorAll(`#parameterFormSelect option[value='${result.recentParameter}']`).length === 1) {
+                parameterFormSelect.value = result.recentParameter;
+                updateParameterForm()
+            }
+        }
     });
 }
 
