@@ -8,7 +8,7 @@
   "permissions": [
     "tabs","storage","history"
   ],
-  "description" : "Semi-automated analysis tool for OAuth 2.0 and OpenID 1.0 Auth Requests.",
+  "description" : "Semi-automated analysis tool for OAuth 2.0 and OpenID Connect 1.0 Auth Requests.",
   "icons" : {
     "128":"aura_logo_favicon.png"
   }
