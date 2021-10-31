@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<title>AuRA - Auth. Request Analyser</title>
 <!--(c) Lauritz Holtmann, https://security.lauritz-holtmann.de -->
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8"/>
+    <title>AuRA - Auth. Request Analyser</title>
     <style>
         body {
           background-color: linen;
@@ -87,24 +87,26 @@
     <h3>Auth. Request Analyser</h3>
 
     <!-- Parameter Table: The following Table is used to render request parameters (it is only filled with content if an auth request is given) -->
-    <table id="parameterTable"></table>
+    <table id="parameterTable" aria-describedby="Request Parameters">
+      <th scope="col">Parameter</th><th scope="col">Value</th>
+    </table>
 
     <hr>
 
     <div id="noAuthRequest">
-      <p><i>Uh oh!</i> Apparently this is not an Auth. Request ☹️</p>
-      <p>To configure and implement a single sign-on flow based on OAuth 2.0 or OpenID Connect 1.0 can be challenging. This extensions supports the analysis of the <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-1.2" target="_blank">Auth. Request</a>, as many misconfigurations and resulting weaknesses can be identified in this single request.</p>
-      <p>Unfortunately, this page apparently does not belong to such an <i>Auth. Request</i>. Do you want to search your recent  browser history for results that appear to belong to such requests? The output is limited to at most 10 results: <button id="searchHistory">Search your history</button></p>
+      <p><em>Uh oh!</em> Apparently this is not an Auth. Request ☹️</p>
+      <p>To configure and implement a single sign-on flow based on OAuth 2.0 or OpenID Connect 1.0 can be challenging. This extensions supports the analysis of the <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-1.2"  target="_blank" rel="noopener">Auth. Request</a>, as many misconfigurations and resulting weaknesses can be identified in this single request.</p>
+      <p>Unfortunately, this page apparently does not belong to such an <em>Auth. Request</em>. Do you want to search your recent  browser history for results that appear to belong to such requests? The output is limited to at most 10 results: <button id="searchHistory">Search your history</button></p>
 
       <form id="authRequestsForm" style="display: none;">
         <hr>
         <h3>Recent Auth. Requests:</h3>
-        The following selection includes the results as <i>&lt;IdP Domain&gt;: &lt;redirect_uri&gt;</i>:<br>
+        The following selection includes the results as <em>&lt;IdP Domain&gt;: &lt;redirect_uri&gt;</em>:<br>
         <select id="authRequestsFormSelect"></select>
         <button id="authRequestsFormButton">Replay Auth. Request</button><br>
-        <i>Note: If you have an active session at the Authorization Server, visiting the above URL may result in an immediate redirect to the client.</i>
+        <em>Note: If you have an active session at the Authorization Server, visiting the above URL may result in an immediate redirect to the client.</em>
       </form>
-      <p id="authRequestsFormNoResults" style="display: none;"><b>We did not find any requests that fullfil our heuristics for Auth. Requests. Try to login somewhere using single sign-on and retry!</b></p>
+      <p id="authRequestsFormNoResults" style="display: none;"><strong>We did not find any requests that fullfil our heuristics for Auth. Requests. Try to login somewhere using single sign-on and retry!</strong></p>
 
     </div>
 
@@ -138,7 +140,7 @@
     <div id="footer">
       <div id="footerLeft">
         <button id="run">Run Analysis again</button>
-        <p>Please have a look at the <a href="https://github.com/lauritzh/auth-request-analyser" target="_blank">Github</a> repository for <i>documentation</i> and <i>issue tracking</i>.</p>
+        <p>Please have a look at the <a href="https://github.com/lauritzh/auth-request-analyser"  target="_blank" rel="noopener">Github</a> repository for <em>documentation</em> and <em>issue tracking</em>.</p>
       </div>
       <div id="footerRight">
         <button id="saveUrl">Save Current URL</button><br>
