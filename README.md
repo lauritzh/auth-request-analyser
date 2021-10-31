@@ -1,6 +1,6 @@
 # AuRA - Auth. Request Analyser
 
-This Chromium extensions aims at supporting the analysis of single sign-on implementations, by offering semi-automated analysis and attack capabilities for OAuth 2.0 and OpenID Connect 1.0 [Authorization/Authentication Requests](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1).
+This Chromium extensions aims to support the analysis of single sign-on implementations, by offering semi-automated analysis and attack capabilities for OAuth 2.0 and OpenID Connect 1.0 [Authorization/Authentication Requests](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1).
 
 ![Demo Screenshot](demo_screenshot.png)
 
@@ -17,11 +17,11 @@ This Chromium extensions aims at supporting the analysis of single sign-on imple
 * Manually trigger analysis.
 
 ## Installation
-For future releases, it is planned to publish the extension at the [Chrome WebStore](https://chrome.google.com/webstore).
+*Always keep in mind that browser extensions have broad access to sensitive data! Therefore, it is recommended to install this extension only to browsers that are solely used for security analysis or development purposes. One great example for this is [PortSwigger's Burp Suite embedded browser](https://portswigger.net/burp/documentation/desktop/functions/embedded-browser).*
 
-Currently, you may either use the latest build published in this repository or directly use the *unpacked sources*.
+It is highly recommended to use the latest stable release from [Chrome WebStore](https://chrome.google.com/webstore/detail/clonpaankbndgnciijbiokgjeofjdpeg).
 
-To use the *unpacked sources*, follow these steps:
+Alternatively, you may either use the latest build published in this repository or directly use the *unpacked sources*. To use the *unpacked sources*, follow these steps:
 1. Clone this repository.
 2. Visit chrome://extensions/.
 3. Enable *Developer mode* (attention, do not enable this option in your "productive" browser!).
@@ -29,7 +29,7 @@ To use the *unpacked sources*, follow these steps:
 
 
 ## Privacy
-The extension analyzes the Auth. Request using the bundled *JavaScript* routines. No information is disclosed to the author of this extension. 
+The extension analyses the Auth. Request using the bundled *JavaScript* routines. No information is disclosed to the author of this extension. 
 
 
 ## Disclaimer
