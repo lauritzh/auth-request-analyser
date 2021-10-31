@@ -240,10 +240,12 @@ function saveUrlLocalStorage() {
 
 function restoreUrlLocalStorage() {
     chrome.storage.local.get("savedUrl", function(result) {
-        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-            chrome.tabs.update(tabs[0].id, { url: result.savedUrl });
-        });
+        openPage(result.savedUrl);
     });
+}
+
+function replayHistoryAuthRequest() {
+    openPage(authRequestsFormSelect.value);
 }
 
 function saveRecentParameterLocalStorage(parameter) {
@@ -266,9 +268,7 @@ function setParameterAndReload(parameterName, parameterValue) {
     urlParams.set(parameterName, parameterValue);
     url.search = urlParams.toString();
 
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        chrome.tabs.update(tabs[0].id, { url: url.toString() });
-    });
+    openPage(url.toString());
 }
 
 function searchHistoryAuthRequest() {
@@ -307,9 +307,9 @@ function searchHistoryAuthRequest() {
     });
 }
 
-function replayHistoryAuthRequest() {
+function openPage(url) {
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        chrome.tabs.update(tabs[0].id, { url: authRequestsFormSelect.value });
+        chrome.tabs.update(tabs[0].id, { url: url });
     });
 }
 
