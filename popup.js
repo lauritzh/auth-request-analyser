@@ -52,6 +52,10 @@ let knowledgeBase = {
         "response_mode":{
             "allowed":["query","fragment"],
             "description":"This parameter allows to specify how the Auth. Response parameters are sent."
+        },
+        "prompt":{
+            "required":false,
+            "description":"This parameter specifies whether the Auth. Server should prompt the user for reauthentication or consent."
         }
     }
 }
@@ -149,6 +153,11 @@ function performAnalysis(params) {
     if(params.get('scope').includes("openid")) {
         list_element = document.createElement("li");
         list_element.innerHTML = 'The current flow apparently uses OpenID Connect, as the scope includes \'openid\'. <a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest" target="_blank"  rel="noopener">See literature.</a>';
+        observationsList.appendChild(list_element);
+    }
+    if(params.get('prompt')) {
+        list_element = document.createElement("li");
+        list_element.innerHTML = 'The current flow uses a \'prompt\' parameter. If the Auth. Server supports \'prompt=none\' and follows the specification, the user is not asked for consent before they are sent to the client. <a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest" target="_blank"  rel="noopener">See literature.</a>';
         observationsList.appendChild(list_element);
     }
 
