@@ -223,7 +223,8 @@ function performAnalysis(params) {
 
 function reloadPageWithModifications() {
     let selectedString = parameterFormSelect.value;
-    let newValue = document.querySelectorAll(`#parameterForm input[name="${selectedString}"]`)[0].value;
+    let selectedStringSanitized = selectedString.replaceAll("'", "\\'"); // we need to escape single quotes
+    let newValue = document.querySelectorAll(`#parameterForm input[name='${selectedStringSanitized}']`)[0].value;
 
     setParameterAndReload(selectedString, newValue);
 }
@@ -257,7 +258,8 @@ function setFocusRecentParameterLocalStorage() {
     chrome.storage.local.get("recentParameter", function(result) {
         if(result.recentParameter) {
             // only set value of select if the option exists
-            if(document.querySelectorAll(`#parameterFormSelect option[value='${result.recentParameter}']`).length === 1) {
+            let recentParameterSanitized = result.recentParameter.replaceAll("'", "\\'"); // we need to escape single quotes 
+            if(document.querySelectorAll(`#parameterFormSelect option[value='${recentParameterSanitized}']`).length === 1) {
                 parameterFormSelect.value = result.recentParameter;
                 updateParameterForm()
             }
