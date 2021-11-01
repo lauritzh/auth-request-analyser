@@ -79,13 +79,14 @@ function processAuthRequest(urlString) {
 function updateParamTable(params) {
     parameterTable.innerHTML='<th scope="col">Parameter</th><th scope="col">Value</th>';
     params.forEach(function(value, key) {
-        var row = parameterTable.insertRow(-1);
+        let row = parameterTable.insertRow(-1);
+        // check if knowledge base includes description for this parameter
         if(knowledgeBase["oauthParams"][key] && knowledgeBase["oauthParams"][key]["description"]) {
             row.title = knowledgeBase["oauthParams"][key]["description"];
         }
 
-        var parameter = row.insertCell(0);
-        var val = row.insertCell(1);
+        let parameter = row.insertCell(0);
+        let val = row.insertCell(1);
 
         parameter.innerText = key;
         val.innerText = value;
