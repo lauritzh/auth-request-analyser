@@ -14,6 +14,7 @@ This Chromium extensions aims to support the analysis of single sign-on implemen
   * *Attacks*: Proposed further test cases, can be automatically executed with one click.
 * Store and reload URL: Can be used as clipboard for one valid request, restore saved URL in case an error causes a redirect.
 * Search history for Auth. Request and replay the request.
+* Indicate with a batch if the currently visited page appears to be an Auth. Request.
 * Manually trigger analysis.
 
 ## Installation
