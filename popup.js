@@ -4,6 +4,7 @@
 
 let run = document.getElementById("run");
 let saveUrl = document.getElementById("saveUrl");
+let lockPage = document.getElementById("lockPage");
 let restoreUrl = document.getElementById("restoreUrl");
 let attacksList = document.getElementById("attacksList");
 let analysisList = document.getElementById("analysisList");
@@ -319,6 +320,27 @@ function searchHistoryAuthRequest() {
     });
 }
 
+function lockPageOnReload() {
+    // lock current page tp prevent JavaScript-based redirects that may take some time after the page has loaded 
+    
+    let listener = function (event) {
+        event.preventDefault();
+        event.returnValue = '';
+    }
+
+    if(lockPage.dataset.state === "unlocked") {
+        lockPage.dataset.state = "locked";
+        lockPage.innerText = "Unlock Current Page";
+
+        window.addEventListener('beforeunload', listener);
+    } else {
+        lockPage.dataset.state = "unlocked";
+        lockPage.innerText = "Lock Current Page";
+
+        window.removeEventListener('beforeunload', listener);
+    }
+}
+
 function openPage(url) {
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         chrome.tabs.update(tabs[0].id, { url: url });
@@ -348,7 +370,8 @@ document.addEventListener("DOMContentLoaded", function() {
     parameterFormSelect.addEventListener("change", updateParameterForm);
     parameterFormButton.addEventListener("click", reloadPageWithModifications);
     run.addEventListener("click", runAnalysis);
-    saveUrl.addEventListener("click", saveUrlLocalStorage);
+    lockPage.addEventListener("click", lockPageOnReload);
+    saveUrl.addEventListener("click", saveUrlLocalStorage); 
     restoreUrl.addEventListener("click", restoreUrlLocalStorage);
     searchHistory.addEventListener("click", searchHistoryAuthRequest);
     authRequestsFormButton.addEventListener("click", replayHistoryAuthRequest);
