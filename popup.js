@@ -201,7 +201,7 @@ function performAnalysis(params) {
     // response_mode fragment supported? https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
     if(!params.get('response_mode')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'Even though this flow does not use a \'response_mode\' parameter, you may test if it supported by the authorization server. In combination with an Open Redirect on an allowed \'redirect_uri\', this may enable token disclosure. <button href="#" id="attackResponseMode">Add response_mode \'fragment\'</button>. <a href="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html"  target="_blank" rel="noopener noreferrer">See literature.</a>';
+        list_element.innerHTML = 'Even though this flow does not use a \'response_mode\' parameter, you may test if it is supported by the authorization server. In combination with an Open Redirect on an allowed \'redirect_uri\', this may enable token disclosure. <button href="#" id="attackResponseMode">Add response_mode \'fragment\'</button>. <a href="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html"  target="_blank" rel="noopener noreferrer">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackResponseMode").addEventListener("click", launchAttackResponseMode);
     }
