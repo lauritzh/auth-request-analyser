@@ -45,6 +45,10 @@ let knowledgeBase = {
             "required":true,
             "description":"This parameter identifies the client."
         },
+        "app_id":{
+            "required":false,
+            "description":"Some Authorization Servers (like Instagram) use this as synonym to the client_id, which normally identifies the client."
+        },
         "scope":{
             "required":false,
             "description":"This parameter defines the requested access scope."
@@ -61,7 +65,7 @@ let knowledgeBase = {
 }
 
 function isAuthRequest(params) {
-    return (params.get('response_type') && params.get('client_id'))
+    return (params.get('response_type') && (params.get('client_id') || params.get('app_id'))); // app_id is for instance used by Instagram...
 }
 
 function processAuthRequest(urlString) {

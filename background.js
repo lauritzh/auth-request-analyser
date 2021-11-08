@@ -3,7 +3,7 @@
  */
 
 function isAuthRequest(params) {
-    return (params.get('response_type') && params.get('client_id'));
+    return (params.get('response_type') && (params.get('client_id') || params.get('app_id'))); // app_id is for instance used by Instagram...
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
