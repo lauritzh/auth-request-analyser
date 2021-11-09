@@ -65,7 +65,12 @@ let knowledgeBase = {
 }
 
 function isAuthRequest(params) {
-    return (params.get('response_type') && (params.get('client_id') || params.get('app_id'))); // app_id is for instance used by Instagram...
+    // 1) According to rfc6749 response_type and client_id are required
+    // 2) app_id is used in some cases by Instagram instead of client_id
+    // 3) Facebook requires client_id, redirect_uri and state: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/?locale=en_US
+    return ((params.get('response_type') && (params.get('client_id') || params.get('app_id'))) || // app_id is for instance used by Instagram in some cases...
+    (params.get('client_id') && params.get('redirect_uri') && params.get('state')) // Facebook requires client_id, redirect_uri and state
+    ); 
 }
 
 function processAuthRequest(urlString) {
@@ -291,7 +296,7 @@ function searchHistoryAuthRequest() {
     authRequestsFormSelect.innerHTML = "";
     authRequestsForm.removeAttribute("style");
 
-    chrome.history.search({ text:"response_type", maxResults:10000 }, function(data) {
+    chrome.history.search({ text:"client_id", maxResults:10000 }, function(data) {
         let mapTupleSet = []
         data.some(function(page) {
             // check if history item matches our heuristics for auth requests and to
