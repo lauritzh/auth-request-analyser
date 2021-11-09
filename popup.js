@@ -159,7 +159,7 @@ function performAnalysis(params) {
     let list_element;
     ////////// Observations
     // Scope includes "openid": https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
-    if(params.get('scope').includes("openid")) {
+    if(params.get('scope') && params.get('scope').includes("openid")) {
         list_element = document.createElement("li");
         list_element.innerHTML = 'The current flow apparently uses OpenID Connect, as the scope includes \'openid\'. <a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest" target="_blank"  rel="noopener noreferrer">See literature.</a>';
         observationsList.appendChild(list_element);
@@ -172,7 +172,7 @@ function performAnalysis(params) {
 
     ////////// Checks
     // Deprecated grant types: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
-    if(params.get('response_type').includes("token")) {
+    if(params.get('response_type') && params.get('response_type').includes("token")) {
         list_element = document.createElement("li");
         list_element.innerHTML = 'Clients SHOULD NOT use response types that include \'token\', because for these flows the authorization server includes the access tokens within the authorization response, which may enable access token leakage and access token replay attacks. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2"  target="_blank" rel="noopener noreferrer">See literature.</a>';
         analysisList.appendChild(list_element);
@@ -200,7 +200,7 @@ function performAnalysis(params) {
 
     ////////// Attacks
     // Implicit Flow supported? https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
-    if(!params.get('response_type').includes("token")) {
+    if(params.get('response_type') && !params.get('response_type').includes("token")) {
         list_element = document.createElement("li");
         list_element.innerHTML = 'Even though this flow does not use the deprecated implicit grant type, it may be allowed for this client. <button href="#" id="attackImplicitFlowSupported">Change response_type to \'token\'</button>. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2"  target="_blank" rel="noopener noreferrer">See literature.</a>';
         attacksList.appendChild(list_element);
