@@ -202,9 +202,10 @@ function performAnalysis(params) {
     // Implicit Flow supported? https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2
     if(params.get('response_type') && !params.get('response_type').includes("token")) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'Even though this flow does not use the deprecated implicit grant type, it may be allowed for this client. <button href="#" id="attackImplicitFlowSupported">Change response_type to \'token\'</button>. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2"  target="_blank" rel="noopener noreferrer">See literature.</a>';
+        list_element.innerHTML = 'Even though this flow does not use the deprecated implicit grant type, it may be allowed for this client. <button href="#" id="attackImplicitFlowSupported">Change response_type to \'token\'</button><br> Further, you should try if the <a href="https://openid.net/specs/openid-connect-core-1_0.html#HybridAuthRequest" target="_blank" rel="noopener noreferrer">OIDC hybrid flow</a> is supported. <button href="#" id="attackHybridFlowSupported">Change response_type to \'code token\'</button><br><a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-2.1.2" target="_blank" rel="noopener noreferrer">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackImplicitFlowSupported").addEventListener("click", launchAttackImplicitFlowSupported);
+        document.getElementById("attackHybridFlowSupported").addEventListener("click", launchAttackattackHybridFlowSupported);
     }
 
     // response_mode fragment supported? https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
@@ -218,7 +219,7 @@ function performAnalysis(params) {
     // Change PKCE code_challenge_method to plain: https://datatracker.ietf.org/doc/html/rfc7636#section-7.2
     if(params.get('code_challenge_method') === "S256") {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'The current flow uses \'S256\' as code_challenge_method, but \'plain\' may also be allowed. The \'plain\' option only exists for compatibility reasons and SHOULD NOT be used´. <button href="#" id="attackPkcePlain">Change code_challenge_method to \'plain\'</button>. <a href="https://datatracker.ietf.org/doc/html/rfc7636#section-7.2"  target="_blank" rel="noopener noreferrer">See literature.</a>';
+        list_element.innerHTML = 'The current flow uses \'S256\' as code_challenge_method, but \'plain\' may also be allowed. The \'plain\' option only exists for compatibility reasons and SHOULD NOT be used´. <button href="#" id="attackPkcePlain">Change code_challenge_method to \'plain\'</button> <a href="https://datatracker.ietf.org/doc/html/rfc7636#section-7.2"  target="_blank" rel="noopener noreferrer">See literature.</a>';
         attacksList.appendChild(list_element);
         document.getElementById("attackPkcePlain").addEventListener("click", launchAttackPkcePlain);
     }
@@ -337,6 +338,10 @@ function openPage(url) {
 ////////// Attacks
 function launchAttackImplicitFlowSupported() {
     setParameterAndReload("response_type", "token");
+}
+
+function launchAttackattackHybridFlowSupported() {
+    setParameterAndReload("response_type", "code token");
 }
 
 function launchAttackPkcePlain() {
