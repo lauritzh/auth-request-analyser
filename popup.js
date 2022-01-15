@@ -60,6 +60,10 @@ let knowledgeBase = {
         "prompt":{
             "required":false,
             "description":"This parameter specifies whether the Auth. Server should prompt the user for reauthentication or consent."
+        },
+        "request_uri":{
+            "required":false,
+            "description":"This optional OpenID Connect parameter allows to pass the request by reference and is well-known to cause SSRF issues."
         }
     }
 }
