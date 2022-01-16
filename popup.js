@@ -239,8 +239,11 @@ function performAnalysis(params) {
     // Adjust Redirect URI: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.1.3
     if(params.get('redirect_uri')) {
         list_element = document.createElement("li");
-        list_element.innerHTML = 'If the \'redirect_uri\' parameter is present, the authorization server MUST compare it against pre-defined redirection URI values using simple string comparison (RFC3986). Try to fiddle around with different schemes, (sub-)domains, paths, query parameters and fragments. Lax validation may lead to token disclosure. <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.1.3"  target="_blank" rel="noopener noreferrer">See literature.</a>';
+        list_element.innerHTML = 'If the \'redirect_uri\' parameter is present, the authorization server MUST compare it against pre-defined redirection URI values using simple string comparison (RFC3986). Try to fiddle around with different schemes, (sub-)domains, paths, query parameters and fragments. Lax validation may lead to token disclosure. Exemplary attack ideas: <button class="attackRedirectUri" data-variant="0">Use http:// as scheme</button><button class="attackRedirectUri" data-variant="1">Use aura-test:// as scheme</button><button class="attackRedirectUri" data-variant="2">Append aura-test to path</button><button class="attackRedirectUri" data-variant="3">Add aura-test subdomain</button> <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.1.3" target="_blank" rel="noopener noreferrer">See literature.</a>';
         attacksList.appendChild(list_element);
+        Array.from(document.getElementsByClassName("attackRedirectUri")).forEach(function(button) {
+            button.addEventListener("click", launchAttackRedirectUri, false);
+        });
     }
 }
 
@@ -358,6 +361,42 @@ function launchAttackRequestUri() {
 
 function launchAttackResponseMode() {
     setParameterAndReload("response_mode", "fragment");
+}
+
+function launchAttackRedirectUri(event) {
+    let variant = parseInt(event.target.dataset.variant);
+    let redirect_uri = new URL(urlParams.get("redirect_uri"));
+
+    // Manipulate redirect_uri depending on the clicked button
+    switch (variant) {
+        case 0:
+            // Use http:// scheme (we assume here that the default is https://)
+            redirect_uri.protocol = "http:";
+            break;
+        case 1:
+            // Use aura-test:// scheme (should be non-existent)
+            // Scenario: If this works, a native app could be used to leak the Auth. Response
+            redirect_uri.protocol = "aura-test:";
+            break;
+        case 2:
+            // Append something to path
+            // Scenario: If this works, a XSS or open redirect can be used to leak the Auth. Response
+            if(redirect_uri.pathname.slice(-1) === "/") {
+                redirect_uri.pathname = redirect_uri.pathname + "aura-test";
+            }
+            else {
+                redirect_uri.pathname = redirect_uri.pathname + "/aura-test";
+            }
+            break;
+        case 3:
+            // Use imaginary Subdomain
+            // Scenario: If this works, a XSS or open redirect or subdomain takeover can be used to leak the Auth. Response on any subdomain
+            redirect_uri.hostname = "aura-test." + redirect_uri.hostname;
+            break;
+        default:
+            alert("Whoops, something went wrong :(");
+      }
+      setParameterAndReload("redirect_uri", redirect_uri.toString());
 }
 
 /**************************************************************************************************/
