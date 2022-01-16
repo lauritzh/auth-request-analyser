@@ -6,7 +6,7 @@ This Chromium extensions aims to support the analysis of single sign-on implemen
 ![Demo Screenshot](demo_screenshot2.png)
 
 ## Features
-* View request parameters at a glance.
+* View request parameters at a glance, either via the *popup* or the *developer tools panel*.
   * Hover over standardized parameters for background information about parameters.
 * Manually modify request parameters.
 * Detailed Analysis of request parameters:

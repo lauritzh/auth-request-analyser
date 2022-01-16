@@ -3,8 +3,9 @@
   "name": "AuRA - Auth. Request Analyser",
   "version": "1.0.4",
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "application.html"
   },
+  "devtools_page": "devtools.html",
   "background": {
     "service_worker": "background.js"
   },
