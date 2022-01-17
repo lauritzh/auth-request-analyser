@@ -23,11 +23,13 @@ This Chromium extensions aims to support the analysis of single sign-on implemen
 
 It is highly recommended to use the latest stable release from [Chrome WebStore](https://chrome.google.com/webstore/detail/clonpaankbndgnciijbiokgjeofjdpeg).
 
-Alternatively, you may either use the latest build published in this repository or directly use the *unpacked sources*. To use the *unpacked sources*, follow these steps:
+Alternatively, you may either use the latest build published in this repository or directly use the *unpacked sources*. To use the *unpacked sources*, follow these steps (macOS, Linux):
 1. Clone this repository.
-2. Visit chrome://extensions/.
-3. Enable *Developer mode* (attention, do not enable this option in your "productive" browser!).
-4. Specify the cloned folder.
+2. Execute `build.sh` script.
+3. Unpack created ZIP archive (`auth-request-analyser_submission_chrome_yy-mm-dd-HH-MM-SS.zip`).
+4. Visit chrome://extensions/.
+5. Enable *Developer mode* (attention, do not enable this option in your "productive" browser!).
+6. Specify the cloned folder.
 
 
 ## Privacy
