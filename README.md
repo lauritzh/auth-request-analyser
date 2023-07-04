@@ -1,5 +1,7 @@
 # AuRA - Auth. Request Analyser
 
+![Semgrep](https://github.com/lauritzh/auth-request-analyser/actions/workflows/semgrep.yml/badge.svg)
+
 This Chromium extensions aims to support the analysis of single sign-on implementations, by offering semi-automated analysis and attack capabilities for OAuth 2.0 and OpenID Connect 1.0 [Authorization/Authentication Requests](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1).
 
 ![Demo Screenshot](demo_screenshot.png)
@@ -35,6 +37,11 @@ Alternatively, you may either use the latest build published in this repository 
 ## Privacy
 The extension analyses the Auth. Request using the bundled *JavaScript* routines. No information is disclosed to the author of this extension. 
 
+## Security Considerations
+This tool itself is regularly scanned using [Semgrep](https://semgrep.dev/).
+
+If you found any vulnerability in this repository, please use GitHub's [private vulnerability reporting](https://github.com/lauritzh/auth-request-analyser/security) instead of opening a public 
+issue.
 
 ## Disclaimer
 *Any information shared within this repository must not be used with malicious intentions. This tool is shared for educational purposes only. Any malicious use will not hold the author responsible.*
